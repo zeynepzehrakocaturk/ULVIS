@@ -12,7 +12,6 @@
 [![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
 [![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
 
-Kod adı: **GordonFreeman** · Ders: *Yazılım Lab II — Proje 1*
 
 *İçerik:* bu sayfada **Özellikler**, **Teknoloji yığını**, **Kurulum**, **Ortam dosyası**, **npm komutları**, **Örnek hesaplar**, **Cron**, **API**, **Sorun giderme** ve **GitHub About** önerileri bulunur.
 
