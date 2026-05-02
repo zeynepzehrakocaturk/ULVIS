@@ -242,23 +242,6 @@ Sunucu açılışında ve her gün **02:00** (sunucu saati):
 
 ---
 
-## GitHub’da proje adı (About / Description)
-
-- **Kısa açıklama (max ~350 karakter, örnek):**  
-  *Full-stack IT envanteri: donanım, yazılım lisansı, zimmet, arıza; JWT + SQLite + React/Vite. Node 18+.*
-
-- **Website:** (canlı demoyu yayınlarsanız) boş bırakılabilir.  
-- **Sponsor:** ders/kişisel repoda genelde yok.  
-- **Releases / Packages:** sürüm yayınlamak isterseniz `v1.0.0` etiketli tag ile başlayın.
-
----
-
-## Katkı ve lisans
-
-Ekip/öğrenci sözleşmenize uyun. Üretimde **HTTPS**, güçlü parolalar, yedekleme ve ayrı bir veri deposu kullanılmalıdır. Lisans türü (ör. MIT) seçecekseniz repoya `LICENSE` dosyası ekleyin; ardından burada belirtin.
-
----
-
 <div align="center">
 
 **ULVİS** — *Kurumsal Lisans ve Varlık İzleme*
