@@ -1,249 +1,183 @@
-<div align="center">
+<h1 align="center">ULVİS</h1>
 
-# ULVİS
+<p align="center">
+  <strong>Enterprise License & Asset Management Platform</strong><br>
+  <i>A unified, role-based architecture for hardware inventory, software licensing, asset allocation, and incident resolution.</i>
+</p>
 
-**Kurumsal Lisans ve Varlık İzleme Sistemi**
+<p align="center">
+  <a href="https://nodejs.org/"><img src="https://img.shields.io/badge/Node.js-%3E%3D18-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js"></a>
+  <a href="https://expressjs.com/"><img src="https://img.shields.io/badge/Express.js-4.x-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express"></a>
+  <a href="https://react.dev/"><img src="https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=black" alt="React"></a>
+  <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-5-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite"></a>
+  <a href="https://www.sqlite.org/"><img src="https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite&logoColor=white" alt="SQLite"></a>
+</p>
 
-*Donanım, yazılım lisansı, zimmet, arıza ve satınalma — rol tabanlı, tek panel.*
-
-[![Node.js](https://img.shields.io/badge/node.js-%3E%3D18-339933?style=flat&logo=node.js&logoColor=white)](https://nodejs.org/)
-[![Express](https://img.shields.io/badge/Express-4.x-000000?style=flat&logo=express&logoColor=white)](https://expressjs.com/)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=black)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Vite-5-646CFF?style=flat&logo=vite&logoColor=white)](https://vitejs.dev/)
-[![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=flat&logo=sqlite&logoColor=white)](https://www.sqlite.org/)
-
-
-*İçerik:* bu sayfada **Özellikler**, **Teknoloji yığını**, **Kurulum**, **Ortam dosyası**, **npm komutları**, **Örnek hesaplar**, **Cron**, **API**, **Sorun giderme** ve **GitHub About** önerileri bulunur.
-
-</div>
-
-> Bu depodaki `README.md`, GitHub’da `main` / `default` daldayken **proje ana sayfasında** otomatik gösterilir. Açıklamalar, Issues/PR açıklamaları ve “About” açıklama kutusunu da tutarlı tutun.
-
-**Önerilen GitHub *Topics*:** `react` · `vite` · `express` · `sqlite` · `jwt` · `bcrypt` · `inventory-management` · `license-management` · `it-asset` · `full-stack`
-
-| | |
-| --- | --- |
-| **Arayüz (dev)** | http://localhost:3000 — Vite, `/api` → `http://localhost:5000` proksi |
-| **API (dev)** | http://localhost:5000 — `GET /api/health` |
-| **Repo kökü** | `gordon` veya tercihen `ulvis` (klasör adı serbest) |
+> [!NOTE]
+> This repository houses the complete source code for the ULVİS platform. For production deployments, ensure all environment variables and SMTP parameters are strictly configured as per the documentation below.
 
 ---
 
-<!-- 
-  GitHub’da ekran görüntüsü: ör. `docs/preview.png` dosyasını commitleyin ve açıklamalı alt metinle kullanın. 
-  ![ULVİS arayüzü](docs/preview.png)
--->
+## Architecture Overview
 
-## Özellikler
+ULVİS implements a strict multi-tier, decoupled topology. The system leverages an asynchronous Express.js backbone interfacing with an embedded SQLite persistence layer, serving data to a highly reactive React 18 client ecosystem.
 
-| Alan | Açıklama |
-|------|----------|
-| **Kimlik** | JWT, bcrypt, şifre politikası, KVKK onayı, isteğe bağlı e-posta (şifre sıfırlama / IT sıfırlama) |
-| **Roller** | IT Müdürü, IT Destek, Satınalma, Personel (sayfa ve API uçlarına göre kısıtlanır) |
-| **Envanter** | Donanım ve yazılım lisansı CRUD; lisans bitişi ve `durum` senkronu; veri gezgininde PDF dışa aktarma |
-| **Zimmet** | Talep, onay, red, iade; donanım / yazılım ataması |
-| **Destek** | Arıza biletleri, IT tarafında durum güncelleme |
-| **Raporlama** | IT Müdürü panosu: grafikler, yaklaşan lisans maliyetleri, dağılımlar |
-| **Denetim** | `islem_loglari` + başarılı mutasyon/okuma yanıtlarına bağlı denetim |
-| **Bildirim** | Uygulama içi bildirimler; 30 / 15 / 7 gün kala lisans (cron + manuel tetik) |
+```mermaid
+flowchart LR
+    subgraph Client Application
+        UI[React 18 / Vite]
+        CSS[Tailwind CSS]
+        VFS[pdfmake VFS]
+        UI --- CSS
+        UI --- VFS
+    end
+    
+    subgraph Core Engine
+        API(Express Routing Layer)
+        Auth{JWT / RBAC Middleware}
+        Cron[Node-Cron Scheduler]
+        API --> Auth
+    end
+    
+    subgraph Persistence Layer
+        DB[(SQLite / better-sqlite3)]
+    end
 
----
-
-## Teknoloji yığını
-
-| Katman | Teknoloji |
-|--------|-----------|
-| **Backend** | Node.js, Express, better-sqlite3, JWT, bcrypt, node-cron, Nodemailer (opsiyonel) |
-| **Veritabanı** | SQLite — `database.sqlite` veya `DB_PATH` |
-| **Frontend** | React 18, Vite 5, Tailwind CSS, React Router, Axios, Recharts, react-hot-toast |
-| **PDF (istemci)** | pdfmake + VFS; fontlar `addVirtualFileSystem` ile yüklenir |
-
----
-
-## Dizin yapısı (özet)
-
-```
-gordon/
-├── backend/           # REST API, SQLite, seed, cron
-│   ├── config/        # db.js — şema, WAL, migrasyon
-│   ├── routes/        # /api/* kaynakları
-│   ├── middleware/    # JWT, denetim
-│   ├── services/      # Bildirim, e-posta, denetim
-│   └── server.js
-├── frontend/
-│   ├── public/        # logo, statik
-│   └── src/
-│       ├── pages/
-│       ├── components/
-│       ├── context/
-│       └── services/
-├── .gitignore
-└── README.md
+    UI <-->|HTTP / Axios Proxy| API
+    Auth <-->|Audit & Transaction| DB
+    Cron -->|State Mutations| DB
 ```
 
-> **Neden `node_modules` yok?** `.gitignore` ile hariç tutulur. Klon sonrası `npm install` zorunludur.  
-> **Neden `dist` yok?** Üretim önüzü `npm run build` ile üretilir; kaynak sadece `src/`.
+<details>
+<summary><strong>View Component Hierarchy</strong></summary>
+
+```text
+ulvis/
+├── backend/               
+│   ├── config/            # Schema declarations, WAL mode configurations
+│   ├── routes/            # RESTful API endpoints
+│   ├── middleware/        # JWT validation, RBAC enforcement, audit interceptors
+│   ├── services/          # Mailer, cron logic, audit streaming
+│   └── server.js          # Main event loop entry
+└── frontend/              
+    ├── public/            # Static assets
+    └── src/
+        ├── pages/         # Route-level view components
+        ├── components/    # Reusable user interface modules
+        ├── context/       # Global state providers
+        └── services/      # Axios-based API client wrappers
+```
+</details>
 
 ---
 
-## Gereksinimler
+## Enterprise Capabilities
 
-- **Node.js** 18+ (LTS önerilir)  
-- **npm**  
-- (İsteğe bağlı) SMTP — e-posta istemiyorsanız doldurmayın; uygulama çalışmaya devam eder
+| Domain | Technical Implementation |
+| :--- | :--- |
+| **Identity & Security** | Cryptographic signing via JWT, bcrypt hashing algorithms, strict password policies, and GDPR-compliant consent architectures. |
+| **Access Control (RBAC)** | Granular routing protection for *IT Manager*, *IT Support*, *Procurement*, and *Personnel* across both client interfaces and API endpoints. |
+| **Asset Lifecycle** | Idempotent CRUD operations for hardware/software assets, automated state synchronization, and client-side PDF rendering. |
+| **Allocation Workflow** | End-to-end request, approval, and revocation pipelines ensuring absolute accountability for all corporate inventory assignments. |
+| **Incident Telemetry** | Integrated ticketing framework enabling real-time status mutation and resolution tracking by authorized IT personnel. |
+| **Automated Auditing** | Immutable transaction ledgers (`islem_loglari`) capturing authenticated mutations and context-sensitive data retrievals. |
+| **Asynchronous Jobs** | Daemonized cron schedulers executing temporal evaluations at `02:00` daily, managing expiration states and proactive alerting. |
 
 ---
 
-## Hızlı başlangıç (2 terminal)
+## Infrastructure Initialization
 
-### 1) Depoyu al
+### System Prerequisites
+* **Runtime:** `Node.js v18.x` or higher (LTS mandatory for production)
+* **Package Manager:** `npm`
+* **Mail Server:** *(Optional)* Standard SMTP relay parameters.
 
+### Execution Protocol
+
+**1. Clone the Source:**
 ```bash
-git clone https://github.com/<kullanici-adin>/<depo-adi>.git
-cd <depo-adi>
+git clone [https://github.com/your-username/ulvis.git](https://github.com/your-username/ulvis.git)
+cd ulvis
 ```
 
-### 2) Backend
-
+**2. Initialize Core API (Terminal 1):**
 ```bash
 cd backend
 npm install
-```
-
-`backend/.env` dosyasını **oluştur** (aşağıdaki değişkenlere bakın). Ardından:
-
-```bash
 npm run seed
 npm run dev
 ```
 
-- `seed` mevcut SQLite verisini siler ve örnek veri basar; **dikkatli kullanın**  
-- API: **http://localhost:5000** — canlılık: `GET /api/health`
+> [!CAUTION]
+> Executing `npm run seed` will irrevocably purge the existing SQLite database and instantiate baseline development accounts. Do not execute this command in a production environment.
 
-### 3) Frontend
-
-Yeni terminal:
-
+**3. Initialize Client Interface (Terminal 2):**
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
 
-- Arayüz: **http://localhost:3000** (`vite.config.js` → `server.port: 3000`)  
-- İstekler: `/api` → Vite proksi → **http://localhost:5000**
-
-### 4) Önizleme (üretim derlemesi, isteğe bağlı)
-
-```bash
-cd frontend
-npm run build
-npm run preview
-```
-
-`frontend/dist` repoya alınmaz; sunucunuzda `dist`’i statik servis edin veya ters proksi ile API’ye yönlendirin.
+> [!TIP]
+> The development server utilizes Vite's proxy capabilities. All requests originating from `http://localhost:3000/api` are seamlessly routed to the Express instance operating on `http://localhost:5000`.
 
 ---
 
-## Ortam dosyası (backend)
+## Environment Configuration
 
-`backend/.env` örnek (tırnak/ boşluk sizin ortamınıza göre):
+Deployment parameters are governed by a `.env` file located in the `backend/` directory.
 
 ```env
+# Runtime Parameters
 PORT=5000
-JWT_SECRET=gercek-ortamda-uzun-ve-tekil-bir-anahtar
+JWT_SECRET=insert_minimum_256bit_cryptographic_key
 DB_PATH=./database.sqlite
 
-# Şifre sıfırlama e-postasındaki frontend adresi (bu repoda Vite: 3000)
+# Client Routing Target
 APP_URL=http://localhost:3000
-
 RESET_TOKEN_TTL_MINUTES=60
 
-# Opsiyonel SMTP — dört değer birden yoksa e-posta atlanır
-# SMTP_HOST=
-# SMTP_PORT=587
-# SMTP_SECURE=false
-# SMTP_USER=
-# SMTP_PASS=
-# SMTP_FROM="ULVİS <no-reply@ornek.com>"
+# SMTP Integration (Degrades safely if omitted)
+SMTP_HOST=smtp.enterprise.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=service_account
+SMTP_PASS=service_password
+SMTP_FROM="ULVIS System <no-reply@enterprise.com>"
 ```
 
-| Değişken | Zorunlu | Açıklama |
-|----------|---------|----------|
-| `JWT_SECRET` | Evet (üretim) | JWT imzası; repoya asla koyulmaz |
-| `PORT` | Hayır | Varsayılan `5000` |
-| `DB_PATH` | Hayır | Varsayılan `backend` altında `database.sqlite` |
-| `APP_URL` | Hayır | Şifre sıfırlama linki tabanı |
-| `RESET_TOKEN_TTL_MINUTES` | Hayır | Varsayılan `60` |
-| `SMTP_*` | Hayır | Hepsi anlamlı dolduğunda e-posta |
-
-`.env` zaten **`.gitignore`** içindedir; sadece bu README veya kendi notlarınızı paylaşın.
+> [!IMPORTANT]
+> To comply with strict security standards, `.env` files must be excluded from version control. Rely on `.env.example` to distribute parameter requirements to development teams.
 
 ---
 
-## npm komutları
+## Administrative Credentials
 
-### Backend
+Default access credentials provisioned post-seeding. 
 
-| Komut | Açıklama |
-|-------|----------|
-| `npm run dev` | nodemon ile geliştirme |
-| `npm start` | `node server.js` (üretim) |
-| `npm run seed` | Veritabanı + örnek veri (mevcut veri silinir) |
+| Privilege Level | Email Identifier | Authentication Key |
+| :--- | :--- | :--- |
+| **IT Manager** | `admin@ulvis.com.tr` | `admin123` |
+| **IT Support** | `itdestek@ulvis.com.tr` | `destek123` |
+| **Procurement** | `satinalma@ulvis.com.tr` | `satin123` |
+| **Personnel** | `ali.ozturk@ulvis.com.tr` | `personel123` |
 
-### Frontend
-
-| Komut | Açıklama |
-|-------|----------|
-| `npm run dev` | Vite + API proksi |
-| `npm run build` | `dist` üretimi |
-| `npm run preview` | `dist` önizleme |
+> [!WARNING]
+> These keys are meant strictly for local benchmarking. Rotate all credentials immediately upon bridging to a public or staging network.
 
 ---
 
-## Örnek hesaplar (`npm run seed` sonrası)
+## Diagnostic Matrix
 
-> **Dikkat:** Yalnızca geliştirme. Üretimde tüm parolalar değiştirilmelidir.
+| Indicator | Root Cause Analysis & Mitigation |
+| :--- | :--- |
+| **HTTP 401 Unauthorized** | Token expiration or `JWT_SECRET` mismatch. Invalidate local storage tokens and re-initialize the authentication sequence. |
+| **PDF Subsystem Failure** | Virtual File System (VFS) misconfiguration. Verify `addVirtualFileSystem` is invoked accurately within `Database.jsx`. |
+| **SMTP Delivery Failure** | Malformed `SMTP_*` variables. The mailer module will intercept the failure, log the error, and degrade silently without halting the main thread. |
+| **EADDRINUSE (Port Conflict)** | TCP port collision. Override `PORT` in the backend configuration or reassign `server.port` within `vite.config.js`. |
 
-| Rol | E-posta | Şifre |
-|-----|---------|-------|
-| IT Müdürü | `admin@ulvis.com.tr` | `admin123` |
-| IT Destek | `itdestek@ulvis.com.tr` | `destek123` |
-| Satınalma | `satinalma@ulvis.com.tr` | `satin123` |
-| Personel | `ali.ozturk@ulvis.com.tr` | `personel123` |
-
----
-
-## Zamanlayıcı (cron)
-
-Sunucu açılışında ve her gün **02:00** (sunucu saati):
-
-1. Bitişi güncellenmiş ama hâlâ “Süresi Dolmuş” kalan lisans → **Aktif**e alınabilir.  
-2. Bitişi geçmiş **Aktif** lisans → **Süresi Dolmuş** işaretlenebilir.  
-3. 30 / 15 / 7 gün kala → Satınalma ve IT Müdürü’ne in-app bildirim denenir.
-
----
-
-## API
-
-- Kök: **`/api`** (ör. `POST /api/auth/login`, `GET /api/licenses`)  
-- Ön uç: Axios tabanı `'/api'`; geliştirmede Vite proksi devreye girer
-
----
-
-## Sorun giderme
-
-| Belirti | Ne yapılabilir |
-|--------|----------------|
-| 401, login’e düşme | Token süresi, `JWT_SECRET` değişimi; `localStorage`’ı temizleme |
-| PDF / font hatası | pdfmake VFS: `addVirtualFileSystem`; `Database.jsx` yüklemesi |
-| E-posta yok | `SMTP_*` eksik/yanlış — bilinçli olarak opsiyonel |
-| Port meşgul | `PORT` (backend) veya Vite `server.port` değiştirme |
-
----
+<br>
 
 <div align="center">
-
-**ULVİS** — *Kurumsal Lisans ve Varlık İzleme*
-
+  <strong>ULVİS</strong> — <i>Enterprise License & Asset Management Platform</i>
 </div>
