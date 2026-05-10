@@ -129,9 +129,10 @@ flowchart LR
     Auth <-->|Audit & Transaction| DB
     Cron -->|State Mutations| DB
 ```
-
+## Component Hierarchy
 <details>
-<summary><strong>View Component Hierarchy</strong></summary>
+<summary>View Component Hierarchy</summary>
+
 
 ```text
 ulvis/
