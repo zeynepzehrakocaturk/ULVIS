@@ -18,6 +18,88 @@
 
 ---
 
+## Screenshots
+
+<details>
+<summary>View Screenshots</summary>
+
+<br>
+
+<p align="center">
+  <img src="docs/login-security.png" width="800">
+  <br>
+  <strong>Login Screen & Security Components</strong>
+</p>
+
+<p align="center">
+  <img src="docs/password-reset.png" width="800">
+  <br>
+  <strong>Password Reset Request Screen</strong>
+</p>
+
+<p align="center">
+  <img src="docs/role-menu.png" width="800">
+  <br>
+  <strong>Role-Based Menu Structure</strong>
+</p>
+
+<p align="center">
+  <img src="docs/it-dashboard.png" width="800">
+  <br>
+  <strong>IT Manager Dashboard</strong>
+</p>
+
+<p align="center">
+  <img src="docs/notifications.png" width="800">
+  <br>
+  <strong>Notification Center Screen</strong>
+</p>
+
+<p align="center">
+  <img src="docs/database-review.png" width="800">
+  <br>
+  <strong>Database Review Screen</strong>
+</p>
+
+<p align="center">
+  <img src="docs/logs.png" width="800">
+  <br>
+  <strong>Transaction Logs Screen</strong>
+</p>
+
+<p align="center">
+  <img src="docs/assignment.png" width="800">
+  <br>
+  <strong>Asset Assignment Process Screen</strong>
+</p>
+
+<p align="center">
+  <img src="docs/fault-management.png" width="800">
+  <br>
+  <strong>Fault Management Screen</strong>
+</p>
+
+<p align="center">
+  <img src="docs/invoice-management.png" width="800">
+  <br>
+  <strong>Invoice Management & Role-Based Permissions</strong>
+</p>
+
+<p align="center">
+  <img src="docs/my-assets.png" width="800">
+  <br>
+  <strong>My Assets Screen</strong>
+</p>
+
+<p align="center">
+  <img src="docs/hardware-management.png" width="800">
+  <br>
+  <strong>Hardware Management Screen</strong>
+</p>
+
+</details>
+
+---
 ## Architecture Overview
 
 ULVİS implements a strict multi-tier, decoupled topology. The system leverages an asynchronous Express.js backbone interfacing with an embedded SQLite persistence layer, serving data to a highly reactive React 18 client ecosystem.
